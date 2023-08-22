@@ -1,5 +1,5 @@
 <script setup>
-const emits = defineEmits(['update:checked'])
+const emit = defineEmits(['update:checked'])
 
 const props = defineProps({
 	name: {
@@ -22,10 +22,14 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	disabled: {
+		type: Boolean,
+		default: false,
+	},
 })
 
 const handleClick = event => {
-	emits('update:checked', event.target.checked)
+	emit('update:checked', event.target.checked)
 }
 </script>
 
@@ -37,6 +41,7 @@ const handleClick = event => {
 		:id="id"
 		:value="value"
 		:checked="checked"
+		:disabled="disabled"
 		@input="handleClick($event)"
 	/>
 	<label :for="id">{{ label }}</label>
