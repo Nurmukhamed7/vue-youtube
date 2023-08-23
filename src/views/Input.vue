@@ -7,8 +7,11 @@ import {
 	maxLength,
 	minLength,
 	numeric,
+	sameAs,
 } from '@vuelidate/validators'
 import { computed, ref } from 'vue'
+
+import Button from '@/components/Button.vue'
 
 const nameField = ref('')
 const emailField = ref('')
@@ -30,16 +33,34 @@ const rules = computed(() => ({
 		),
 		numeric: helpers.withMessage('Вы можете ввести только числа', numeric),
 	},
+	confirmPasswordField: {
+		sameAsPassword: helpers.withMessage(
+			'Пароли не совпадают',
+			sameAs(passwordField.value)
+		),
+	},
 }))
 
 // тут используем rules и какие правила, например nameField
-const v = useVuelidate(rules, { nameField, emailField, luckyFiled })
+const v = useVuelidate(rules, {
+	nameField,
+	emailField,
+	luckyFiled,
+	confirmPasswordField,
+})
+
+const submitForm = () => {
+	v.value.$touch()
+	console.log(v.value.$error)
+	if (v.value.$error) return
+	else alert('все заполнено')
+}
 </script>
 
 <template>
 	<h1 class="heading-1">Inputs from Input.vue (views)</h1>
 
-	<form>
+	<form @submit.prevent="submitForm">
 		<Input
 			label="Your name"
 			name="name"
@@ -61,6 +82,22 @@ const v = useVuelidate(rules, { nameField, emailField, luckyFiled })
 			v-model:value="v.luckyFiled.$model"
 			:error="v.luckyFiled.$errors"
 		/>
+		<h2 class="heading-2">Работа с паролями</h2>
+		<Input
+			label="Your password"
+			name="password"
+			placeholder="Your password"
+			v-model:value="passwordField"
+			type="password"
+		/>
+		<Input
+			label="Confirm your password"
+			name="confirm"
+			placeholder="Confirm your password"
+			v-model:value="v.confirmPasswordField.$model"
+			:error="v.confirmPasswordField.$errors"
+		/>
+		<Button label="Submit" />
 	</form>
 </template>
 
